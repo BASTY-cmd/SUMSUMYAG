@@ -1,0 +1,216 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Things Used in Holy Mass</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>HOLY MASS QUIZ</h1>
+            <p>Things Used in the Celebration of the Holy Mass</p>
+        </header>
+
+        <div class="quiz-info">
+            <span>15 Questions</span>
+            <span>Multiple Choice</span>
+        </div>
+
+        <form id="quizForm">
+
+            <div id="questions"></div>
+
+            <button type="submit" class="submit-btn">
+                Submit Answers
+            </button>
+        </form>
+
+        <div id="result" class="result" hidden></div>
+
+        <button id="retryBtn" class="retry-btn" hidden>
+            Try Again
+        </button>
+
+        <footer>
+            <p>Learn and appreciate the sacred things used in the Holy Mass.</p>
+        </footer>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "What is the sacred vessel used to hold the wine during Mass?",
+                options: ["Chalice", "Ciborium", "Cruet", "Paten"],
+                answer: "Chalice"
+            },
+            {
+                question: "What is the small plate used to hold the host?",
+                options: ["Corporal", "Paten", "Purificator", "Lavabo"],
+                answer: "Paten"
+            },
+            {
+                question: "What is the vessel used to hold the consecrated hosts?",
+                options: ["Chalice", "Ciborium", "Monstrance", "Cruet"],
+                answer: "Ciborium"
+            },
+            {
+                question: "What is the white cloth placed on the altar?",
+                options: ["Alb", "Amice", "Altar cloth", "Stole"],
+                answer: "Altar cloth"
+            },
+            {
+                question: "What is the book containing the prayers and instructions for Mass?",
+                options: ["Lectionary", "Roman Missal", "Bible", "Book of Psalms"],
+                answer: "Roman Missal"
+            },
+            {
+                question: "What is used to carry incense during Mass?",
+                options: ["Thurible", "Aspergillum", "Cruet", "Ciborium"],
+                answer: "Thurible"
+            },
+            {
+                question: "What is the container that holds incense before it is burned?",
+                options: ["Boat", "Paten", "Chalice", "Burse"],
+                answer: "Boat"
+            },
+            {
+                question: "What is the small bell sometimes rung during the Eucharistic Prayer?",
+                options: ["Church bell", "Altar bell", "Angelus bell", "Processional bell"],
+                answer: "Altar bell"
+            },
+            {
+                question: "What is the vessel used to hold water and wine?",
+                options: ["Cruet", "Chalice", "Ciborium", "Thurible"],
+                answer: "Cruet"
+            },
+            {
+                question: "What is the cloth used to wipe the chalice?",
+                options: ["Corporal", "Purificator", "Altar cloth", "Amice"],
+                answer: "Purificator"
+            },
+            {
+                question: "What is the square cloth placed under the sacred vessels?",
+                options: ["Pall", "Corporal", "Stole", "Alb"],
+                answer: "Corporal"
+            },
+            {
+                question: "What is the stiff, square cover placed over the chalice?",
+                options: ["Pall", "Burse", "Purificator", "Amice"],
+                answer: "Pall"
+            },
+            {
+                question: "What is the container used to display the Blessed Sacrament for adoration?",
+                options: ["Ciborium", "Chalice", "Monstrance", "Tabernacle key"],
+                answer: "Monstrance"
+            },
+            {
+                question: "What is the liturgical vestment worn by a priest over the alb?",
+                options: ["Cassock", "Chasuble", "Amice", "Surplice"],
+                answer: "Chasuble"
+            },
+            {
+                question: "What is the vessel used to sprinkle holy water?",
+                options: ["Thurible", "Aspergillum", "Cruet", "Boat"],
+                answer: "Aspergillum"
+            }
+        ];
+
+        const questionsContainer = document.getElementById("questions");
+        const quizForm = document.getElementById("quizForm");
+        const result = document.getElementById("result");
+        const retryBtn = document.getElementById("retryBtn");
+
+        function loadQuiz() {
+            questionsContainer.innerHTML = "";
+
+            quizData.forEach((item, index) => {
+                const questionBox = document.createElement("div");
+                questionBox.className = "question-box";
+
+                const title = document.createElement("h3");
+                title.textContent = `${index + 1}. ${item.question}`;
+                questionBox.appendChild(title);
+
+                item.options.forEach(option => {
+                    const label = document.createElement("label");
+                    label.className = "option";
+
+                    const radio = document.createElement("input");
+                    radio.type = "radio";
+                    radio.name = `question${index}`;
+                    radio.value = option;
+                    radio.required = true;
+
+                    label.appendChild(radio);
+                    label.appendChild(document.createTextNode(" " + option));
+                    questionBox.appendChild(label);
+                });
+
+                questionsContainer.appendChild(questionBox);
+            });
+        }
+
+        quizForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let score = 0;
+
+            quizData.forEach((item, index) => {
+                const selected = document.querySelector(
+                    `input[name="question${index}"]:checked`
+                );
+
+                if (selected && selected.value === item.answer) {
+                    score++;
+                }
+            });
+
+            const percentage = Math.round(
+                (score / quizData.length) * 100
+            );
+
+            result.hidden = false;
+            result.innerHTML = `
+                <h2>Quiz Completed!</h2>
+                <p>Your Score: ${score} / ${quizData.length}</p>
+                <p>Percentage: ${percentage}%</p>
+                <h3>${getMessage(percentage)}</h3>
+            `;
+
+            quizForm.querySelectorAll("input").forEach(input => {
+                input.disabled = true;
+            });
+
+            quizForm.querySelector(".submit-btn").disabled = true;
+            retryBtn.hidden = false;
+        });
+
+        function getMessage(percentage) {
+            if (percentage >= 90) return "Excellent! You know your liturgical items!";
+            if (percentage >= 75) return "Very good! Keep learning!";
+            if (percentage >= 50) return "Good effort! Review the items again.";
+            return "Keep practicing! You can do better!";
+        }
+
+        retryBtn.addEventListener("click", function() {
+            quizForm.reset();
+            quizForm.querySelectorAll("input").forEach(input => {
+                input.disabled = false;
+            });
+
+            quizForm.querySelector(".submit-btn").disabled = false;
+            result.hidden = true;
+            retryBtn.hidden = true;
+            loadQuiz();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+        loadQuiz();
+    </script>
+
+</body>
+</html>
